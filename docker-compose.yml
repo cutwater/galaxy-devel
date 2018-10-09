@@ -1,0 +1,53 @@
+version: '3.7'
+services:
+
+  galaxy:
+    image: 'galaxy-dev/galaxy:latest'
+    init: true
+    ports:
+      - '8000:8000'
+    volumes:
+      - ${PWD}/../galaxy:/galaxy
+    links:
+      - postgres
+      - rabbitmq
+      - pulp
+    environment:
+      # FIXME(cutwater): This should be a part of standard development config
+      - GALAXY_DB_URL=postgres://galaxy:galaxy@postgres:5432/galaxy
+
+  pulp:
+    image: 'galaxy-dev/pulp:latest'
+    init: true
+    volumes:
+      - ${PWD}/../:/src
+    links:
+      - postgres
+      - redis
+
+  postgres:
+    image: 'postgres:9.5'
+    volumes:
+      - ${PWD}/docker/postgres/initdb.d:/docker-entrypoint-initdb.d
+
+  redis:
+    image: 'redis:4.0'
+
+  rabbitmq:
+    image: 'rabbitmq:3.7'
+    environment:
+      - RABBITMQ_DEFAULT_USER=galaxy
+      - RABBITMQ_DEFAULT_PASS=galaxy
+      - RABBITMQ_DEFAULT_VHOST=galaxy
+
+  influxdb:
+    image: 'influxdb:1.6'
+    ports:
+      - '8086:8086'
+    environment:
+      - INFLUXDB_REPORTING_DISABLED=true
+      - INFLUXDB_DB=galaxy
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+      - INFLUXDB_WRITE_USER=galaxy
+      - INFLUXDB_WRITE_USER_PASSWORD=galaxy

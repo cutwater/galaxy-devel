@@ -1,0 +1,8 @@
+# Ansible file
+*.retry
+
+# Runtime build files
+/var/*
+
+# Keep .gitkeep files
+!.gitkeep

@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: false
+  vars:
+    project_root: '{{ (playbook_dir ~ "/../..") | realpath }}'
+    source_root: '{{ (project_root ~ "/..") | realpath  }}'
+    var_path: '{{ project_root }}/var'
+
+  roles:
+    - role: docker-pulp
+    - role: docker-galaxy

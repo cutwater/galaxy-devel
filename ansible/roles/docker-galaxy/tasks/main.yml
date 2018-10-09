@@ -1,0 +1,34 @@
+---
+- name: Create temporary directory
+  file:
+    path: "{{ var_path }}/galaxy"
+    state: directory
+
+- name: Copy build files
+  copy:
+    src: '{{ project_root }}/docker/galaxy/{{ item.path }}'
+    dest: '{{ var_path }}/galaxy/{{ item.path }}'
+    mode: '{{ item.mode }}'
+    remote_src: true
+  with_items:
+    - {'path': 'Dockerfile', 'mode': '0644'}
+    - {'path': 'entrypoint.sh', 'mode': '0755'}
+    - {'path': 'run.sh', 'mode': '0755'}
+    - {'path': 'tmux.conf', 'mode': '0755'}
+
+- name: Copy requirements.txt
+  copy:
+    src: '{{ source_root }}/galaxy/requirements.txt'
+    dest: '{{ var_path }}/galaxy/requirements.txt'
+    remote_src: true
+
+# - name: Generate random secret for Django
+#   shell: cat /dev/urandom | tr -dc 'a-z0-9!@#$%^&*(\-_=+)' | head -c 50
+#   register: django_secret
+
+- name: Build galaxy image
+  docker_image:
+    name: 'galaxy-dev/galaxy'
+    path: '{{ var_path }}/galaxy'
+    dockerfile: '{{ var_path }}/galaxy/Dockerfile'
+    force: true
