@@ -19,6 +19,8 @@ services:
   pulp:
     image: 'galaxy-dev/pulp:latest'
     init: true
+    ports:
+      - '8080:8000'
     volumes:
       - ${PWD}/../:/src
     links:
