@@ -31,6 +31,7 @@ run_migrations() {
     echo "Running migrations..."
     "${PULP_VENV}/bin/pulp-manager" makemigrations --noinput
     "${PULP_VENV}/bin/pulp-manager" migrate --noinput
+    "${PULP_VENV}/bin/pulp-manager" reset-admin-password --password admin
 }
 
 prepare_env() {
