@@ -21,12 +21,18 @@ activate_virtualenv() {
 }
 
 install_dev_packages() {
-    echo "Installing development packages..."
-    "${GALAXY_VENV}/bin/pip" install -q -e /galaxy
+    echo "Installing pulp packages..."
+    "${GALAXY_VENV}/bin/pip" install -e /pulp/pulpcore
+    "${GALAXY_VENV}/bin/pip" install -e /pulp/plugin
+    echo "Installing galaxy packages..."
+    "${GALAXY_VENV}/bin/pip" install -e /galaxy
 }
 
 run_migrations() {
+    "${GALAXY_VENV}/bin/galaxy-manage" makemigrations --noinput pulp_app
+    "${GALAXY_VENV}/bin/galaxy-manage" makemigrations --noinput pulp_galaxy
     "${GALAXY_VENV}/bin/galaxy-manage" migrate --noinput
+    "${GALAXY_VENV}/bin/galaxy-manage" reset-admin-password --password admin
 }
 
 prepare_env() {

@@ -4,7 +4,6 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 ENV PYTHONUNBUFFERED 1
-ENV PYTHONIOENCODING utf8
 ENV PIP_NO_CACHE_DIR off
 
 ENV GALAXY_HOME /var/lib/galaxy
@@ -26,7 +25,7 @@ RUN dnf -y install \
         gcc \
         git \
         make \
-        python-devel \
+        python3-devel \
         ShellCheck \
         tmux \
         vim \
@@ -41,15 +40,25 @@ RUN yarn global add @angular/cli@6.1.2 \
 COPY requirements.txt /tmp/requirements.txt
 RUN mkdir -p "${GALAXY_VENV}" \
     && pip install virtualenv \
-    && virtualenv /var/lib/galaxy/venv \
+    && python3 -m venv "${GALAXY_VENV}" \
     && "${GALAXY_VENV}/bin/pip" install -U pip wheel flake8 \
     && "${GALAXY_VENV}/bin/pip" install -r /tmp/requirements.txt
+
+RUN mkdir -p \
+        /galaxy \
+        /pulp \
+        /var/lib/galaxy/content \
+        /var/run/pulp \
+        /var/tmp/galaxy \
+        /var/tmp/pulp
 
 RUN git clone https://github.com/ansible/galaxy-lint-rules.git /usr/local/galaxy-lint-rules
 
 COPY tmux.conf "${GALAXY_HOME}/tmux.conf"
 COPY run.sh /run.sh
 COPY entrypoint.sh /entrypoint.sh
+
+VOLUME /var/lib/galaxy/content
 
 WORKDIR /galaxy
 ENTRYPOINT ["/entrypoint.sh"]

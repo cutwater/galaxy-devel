@@ -6,26 +6,18 @@ services:
     init: true
     ports:
       - '8000:8000'
+    # command: ['bash', '-c', 'sleep 3600']
     volumes:
       - ${PWD}/../galaxy:/galaxy
+      - ${PWD}/../pulp:/pulp
     links:
       - postgres
       - rabbitmq
-      - pulp
+      - redis
+      - influxdb
     environment:
       # FIXME(cutwater): This should be a part of standard development config
       - GALAXY_DB_URL=postgres://galaxy:galaxy@postgres:5432/galaxy
-
-  pulp:
-    image: 'galaxy-dev/pulp:latest'
-    init: true
-    ports:
-      - '8080:8000'
-    volumes:
-      - ${PWD}/../:/src
-    links:
-      - postgres
-      - redis
 
   postgres:
     image: 'postgres:9.5'
