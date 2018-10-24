@@ -34,7 +34,7 @@ RUN dnf -y install \
     && rm -rf /var/cache/dnf
 
 # Install node dependencies
-RUN yarn global add @angular/cli \
+RUN yarn global add @angular/cli@6.1.2 \
     && ng set --global packageManager=yarn
 
 # Install python dependencies
