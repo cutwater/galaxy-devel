@@ -7,5 +7,4 @@
     var_path: '{{ project_root }}/var'
 
   roles:
-    - role: docker-pulp
     - role: docker-galaxy
