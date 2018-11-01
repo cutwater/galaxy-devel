@@ -23,13 +23,9 @@ RUN dnf -y install wget \
     && rm -rf /var/cache/dnf
 
 RUN dnf -y install \
-        gcc \
-        git \
-        make \
+        findutils gcc git make \
+        vim tmux ShellCheck \
         python-devel \
-        ShellCheck \
-        tmux \
-        vim \
     && dnf -y clean all \
     && rm -rf /var/cache/dnf
 
