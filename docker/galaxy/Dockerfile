@@ -14,13 +14,14 @@ ENV DJANGO_SETTINGS_MODULE galaxy.settings.development
 ENV C_FORCE_ROOT 1
 
 # Install node.js and yarn
-RUN dnf -y install wget \
-    && wget -O - https://rpm.nodesource.com/setup_8.x | bash - \
-    && wget -O /etc/yum.repos.d/yarn.repo https://dl.yarnpkg.com/rpm/yarn.repo \
+RUN curl -sL -o '/tmp/nodesource-release-fc27-1.noarch.rpm' \
+        'https://rpm.nodesource.com/pub_8.x/fc/27/x86_64/nodesource-release-fc27-1.noarch.rpm' \
+    && rpm -i --nosignature --force '/tmp/nodesource-release-fc27-1.noarch.rpm' \
+    && rm -f '/tmp/nodesource-release-fc27-1.noarch.rpm' \
+    && curl -sL -o '/etc/yum.repos.d/yarn.repo' 'https://dl.yarnpkg.com/rpm/yarn.repo' \
     && dnf -y install nodejs yarn \
-    && dnf -y remove wget \
     && dnf -y clean all \
-    && rm -rf /var/cache/dnf
+    && rm -rf /var/cache/yum
 
 RUN dnf -y install \
         findutils gcc git make \
